@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>病毒检测系统</title>
+    <style>
+        body { background-color: #e0f7fa; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; flex-direction: column;}
+        .top-bar { position: absolute; top: 0; width: 100%; background: #333; color: white; padding: 10px 20px; box-sizing: border-box; display: flex; justify-content: space-between;}
+        .top-bar a { color: white; text-decoration: none; margin-left: 15px; }
+        .box { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 400px; text-align: center;}
+        .box h2 { color: #333; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; }
+        .btn { width: 100%; padding: 10px; background-color: #00bcd4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px;}
+        .btn:hover { background-color: #0097a7; }
+        .error { color: red; font-size: 14px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div>欢迎使用病毒检测系统</div>
+        <div>
+            <span>欢迎您，{{ request.session.info.uid }}</span>
+            <a href="/logout/">退出登录</a>
+        </div>
+    </div>
+
+    <div class="box">
+        <h2>测试文件上传</h2>
+        {% if error_msg %}
+            <div class="error">{{ error_msg }}</div>
+        {% endif %}
+        <form method="post" action="/index/" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="file" name="file" accept=".csv" required>
+            </div>
+            <button type="submit" class="btn">提交</button>
+        </form>
+    </div>
+</body>
+</html>

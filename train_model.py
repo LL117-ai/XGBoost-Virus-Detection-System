@@ -63,5 +63,5 @@ print(f"模型准确率: {accuracy_score(y_test, predictions):.4f}")
 
 # 保存模型和LabelEncoder
 model.save_model('malware_detection.model')
-dump(label_encoder, 'label_encoder.joblib')
+dump(label_encoder, 'app01/models_dir/label_encoder.joblib')
 print("模型和编码器已保存！")

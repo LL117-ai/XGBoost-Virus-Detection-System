@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>病毒检测结果</title>
+    <!-- 引入 ECharts 图表库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h2 { color: #333; }
+        .info-box { background: #e8f5e9; padding: 15px; border-radius: 5px; margin-bottom: 20px; color: #2e7d32; font-weight: bold; }
+        .charts { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .chart { width: 48%; height: 300px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #00bcd4; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .back-btn { display: inline-block; padding: 10px 20px; background: #00bcd4; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>病毒检测结果</h2>
+        <div class="info-box">
+            文件总数：{{ total_files }} 个 &nbsp;&nbsp;|&nbsp;&nbsp; 预测准确率：{{ accuracy }}%
+        </div>
+
+        <!-- 图表区域 -->
+        <div class="charts">
+            <div id="pieChart" class="chart"></div>
+            <div id="barChart" class="chart"></div>
+        </div>
+
+        <h3>以下为前 20 条详细预测结果：</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>文件序号</th>
+                    <th>预测类别</th>
+                    <th>真实类别</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in results %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>
+                        {% if item.predicted == 'malware' %}
+                            <span style="color: red; font-weight: bold;">{{ item.predicted }}</span>
+                        {% else %}
+                            <span style="color: green;">{{ item.predicted }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ item.actual }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="text-align: center;">没有数据</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="/index/" class="back-btn">返回主页</a>
+    </div>
+
+    <!-- 编写图表渲染逻辑 -->
+    <script>
+        // 1. 饼图配置
+        var pieChart = echarts.init(document.getElementById('pieChart'));
+        var pieOption = {
+            title: { text: '预测结果统计', left: 'center' },
+            tooltip: { trigger: 'item' },
+            legend: { bottom: '0%' },
+            series: [
+                {
+                    name: '类别',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    data: [
+                        { value: {{ chart_data.goodware }}, name: 'goodware', itemStyle: {color: '#4caf50'} },
+                        { value: {{ chart_data.malware }}, name: 'malware', itemStyle: {color: '#f44336'} }
+                    ]
+                }
+            ]
+        };
+        pieChart.setOption(pieOption);
+
+        // 2. 柱状图配置
+        var barChart = echarts.init(document.getElementById('barChart'));
+        var barOption = {
+            title: { text: '预测数量对比', left: 'center' },
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: ['goodware', 'malware'] },
+            yAxis: { type: 'value' },
+            series: [
+                {
+                    name: '数量',
+                    type: 'bar',
+                    barWidth: '50%',
+                    data: [
+                        { value: {{ chart_data.goodware }}, itemStyle: {color: '#4caf50'} },
+                        { value: {{ chart_data.malware }}, itemStyle: {color: '#f44336'} }
+                    ]
+                }
+            ]
+        };
+        barChart.setOption(barOption);
+    </script>
+</body>
+</html>

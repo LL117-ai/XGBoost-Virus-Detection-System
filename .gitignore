@@ -11,7 +11,7 @@ __pycache__/
 
 # 数据集（文件太大，建议自己保留，或者放在网盘里）
 TUANDROMD.csv
-test_dataset.csv
+app01/test_dataset.csv
 
 # 模型文件（体积比较大，可以通过代码重新训练生成）
 *.model
